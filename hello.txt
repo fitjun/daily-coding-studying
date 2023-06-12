@@ -24,3 +24,4 @@ version2 version3
 hot-fix1
 remote edit test11111111111111111
 ssh test 2333333333333333333333333
+ssh pull test
