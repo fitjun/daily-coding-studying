@@ -503,6 +503,270 @@ union all：效率高，但交集会重复
 
 ![loading-ag-672](mysql_screenshoot/0d58aa71-074d-401f-a328-fa9bca5aece6.png?msec=1687332037958)
 
+其中ROUND(x,y)中y为负数时往整数方向保留，且后面小数也全部清空，
+
+如 ROUND(124.1234，-1)=120   看个位数四舍五入
+
+   ROUND(151.1234,-2)=200    看十位数四舍五入
+
+
+
+TRUNCATE:截断，没有四舍五入，截断位数及之后数值全归0
+
+
+
+单行函数可以嵌套
+
+![ea583f76-0746-45e2-84dd-292ba59213f9](mysql_screenshoot/ea583f76-0746-45e2-84dd-292ba59213f9.png)
+
+![59834a0b-4fa1-4e42-9322-6836d7a01567](mysql_screenshoot/59834a0b-4fa1-4e42-9322-6836d7a01567.png)
+
+圆内旋转一定角度后弧的长度与半径相同，这个角度叫做一个弧度
+
+![0d6ae59e-f147-43f7-a949-1b14abe5d422](mysql_screenshoot/0d6ae59e-f147-43f7-a949-1b14abe5d422.png)
+
+
+
+![02efd834-219e-4b96-9264-d9f5f515a222](mysql_screenshoot/02efd834-219e-4b96-9264-d9f5f515a222.png)
+
+
+
+![6c8aa6ba-a375-441f-8e68-26b69645e950](mysql_screenshoot/6c8aa6ba-a375-441f-8e68-26b69645e950.png)
+
+## 字符串函数
+
+![208ce002-a25d-442f-b3d8-5b7e6fa1cd33](mysql_screenshoot/208ce002-a25d-442f-b3d8-5b7e6fa1cd33.png)
+
+注意：
+
+ascii(s)：只返回第一个字符对应的ascii码
+
+concat可以将结果合并成一个字段（一列）在输出
+
+concat_ws:比concat多一个连接符.
+
+![4848ce56-4d63-45c6-a5a7-7b2e78c14bd4](mysql_screenshoot/4848ce56-4d63-45c6-a5a7-7b2e78c14bd4.png)
+
+![2dc43d27-86a0-49f9-973e-3d97971edf47](mysql_screenshoot/2dc43d27-86a0-49f9-973e-3d97971edf47.png)
+
+SUBSTR 的index从1开始,没有0
+
+## 日期和时间类型函数
+
+![a99e1d87-0ed7-451c-a3f1-a32c3a6c759b](mysql_screenshoot/a99e1d87-0ed7-451c-a3f1-a32c3a6c759b.png)
+
+
+
+![30c317ca-9011-4e5e-998c-8ba835e4a4dc](mysql_screenshoot/30c317ca-9011-4e5e-998c-8ba835e4a4dc.png)
+
+![2265e6f3-5b7c-45d7-ab31-c10b1c201aaa](mysql_screenshoot/2265e6f3-5b7c-45d7-ab31-c10b1c201aaa.png)
+
+![19112a4e-453c-4dc8-9e4f-c6c5a3cf6e0e](mysql_screenshoot/19112a4e-453c-4dc8-9e4f-c6c5a3cf6e0e.png)
+
+从后面给的时间提取出需要的时间类型
+
+
+
+![47a2a429-6720-4839-8c2f-8e967494c71f](mysql_screenshoot/47a2a429-6720-4839-8c2f-8e967494c71f.png)
+
+
+
+![c8a705e7-320b-463e-84f9-b5c54b069342](mysql_screenshoot/c8a705e7-320b-463e-84f9-b5c54b069342.png)
+
+![fc9a7bf3-f4db-4620-9c2f-5cbcc618eda6](mysql_screenshoot/fc9a7bf3-f4db-4620-9c2f-5cbcc618eda6.png)
+
+![36cca6c5-c6cc-4d66-9218-094b061d107d](mysql_screenshoot/36cca6c5-c6cc-4d66-9218-094b061d107d.png)
+
+
+
+![3c27ac33-bd4e-4977-a8f8-1bc8afe9bfd8](mysql_screenshoot/3c27ac33-bd4e-4977-a8f8-1bc8afe9bfd8.png)
+
+![83f49956-3dd9-44b5-affa-b266034e4f51](mysql_screenshoot/83f49956-3dd9-44b5-affa-b266034e4f51.png)
+
+![81f5c3d2-c643-4adb-90db-783e4aa33cea](mysql_screenshoot/81f5c3d2-c643-4adb-90db-783e4aa33cea.png)
+
+![d2cda207-9c1a-49e5-a455-5d51ecea7f86](mysql_screenshoot/d2cda207-9c1a-49e5-a455-5d51ecea7f86.png)
+
+
+
+GET_FORMATE传入的参数：
+
+![f8c9059e-1b54-436a-968f-dbc77dad617f](mysql_screenshoot/f8c9059e-1b54-436a-968f-dbc77dad617f.png)
+
+![4472bd7e-6d10-42dd-ae87-c370c6395742](mysql_screenshoot/4472bd7e-6d10-42dd-ae87-c370c6395742.png)
+
+就是获得这种格式，可以拿来解析时间:
+
+如
+
+![75dccf4e-a970-4463-8f25-eaea7b521ca0](mysql_screenshoot/75dccf4e-a970-4463-8f25-eaea7b521ca0.png)
+
+
+
+## 流程控制函数
+
+![c239c287-641a-4b0b-80fb-d45ef4a4c33d](mysql_screenshoot/c239c287-641a-4b0b-80fb-d45ef4a4c33d.png)
+
+CASE WHEN 中间没有字段相当于if elif else
+
+CASE WHEN 中间有字段相当于 SWITCH.。。。 CASE 。。。。
+
+使用例子：case前一定有逗号，因为是当作是新的一个字段。最后一定有个END再写别名,其他情况在最后放个else
+
+```sql
+SELECT last_name,department_id,salary,CASE department_id WHEN 10 THEN salary*1.1
+                                                                        WHEN 20 THEN salary*1.2
+                                                                        WHEN 30 THEN salary*1.3 
+                                                                        ELSE salary*1.4 END 'details'
+FROM employees;
+
+SELECT last_name,department_id,salary,CASE department_id WHEN 10 THEN salary*1.1
+                                                                        WHEN 20 THEN salary*1.2
+                                                                        WHEN 30 THEN salary*1.3 
+                                                                        END 'details'
+FROM employees
+WHERE department_id IN(10,20,30);
+
+
+
+```
+
+查询语句自带循环
+
+
+
+## 加密解密函数
+
+![d54635c8-ee2e-4ac6-8a8d-da815605dffa](mysql_screenshoot/d54635c8-ee2e-4ac6-8a8d-da815605dffa.png)
+
+md5加密后不可逆，但是输入相同字符串生成的是相同的密文，所以直接比较密文就知道输入是否一致。
+
+
+
+## mysql信息函数
+
+![88299c9a-dd85-428b-8b37-0ec786a71f06](mysql_screenshoot/88299c9a-dd85-428b-8b37-0ec786a71f06.png)
+
+![b1b5238d-322a-4b6c-9941-2bbcdd410dc1](mysql_screenshoot/b1b5238d-322a-4b6c-9941-2bbcdd410dc1.png)
+
+
+
+# 聚合函数
+
+输入一组数据集合，输出单个值,属于多行函数
+
+![4e168b03-677d-41ae-9b47-9c8f58b60375](mysql_screenshoot/4e168b03-677d-41ae-9b47-9c8f58b60375.png)
+
+## 常用聚合函数：
+
+### avg/sum
+
+只适用于数值类型的字段
+
+
+
+### max/min
+
+适用于数值类型、字符串类型、日期时间类型的字段
+
+
+
+### count
+
+计算指定字段在查询结构中出现的个数
+
+如果计算表中有多少条记录可以使用的方式：
+
+1.count(\*)
+
+2.count(1)
+
+3.count(具体字段)：不一定对！要是出现null就会忽略,要是字段全非空时候就是对的
+
+### 方差、标准差、中位数
+
+
+
+### 1.group by
+
+按照字段分组，属于这个字段的就划分成一组
+
+如按照部门分组，属于同一部门的都会被划分到一组内，聚合函数就可以针对每一组进行计算
+
+如果用到了group by，那么select中声明的非组函数字段都必须出现在group by中，否则查出来都是没意义的，orcacle甚至会报错
+
+而group by中出现的可以不出现在select中
+
+所以必须仔细思考选择select和group by的词条。
+
+group by 声明在from后面，where后面、order by前面、limit前面
+
+#### 新特性：
+
+![0726c561-1692-4158-b73a-e708b6846e0f](mysql_screenshoot/0726c561-1692-4158-b73a-e708b6846e0f.png)
+
+就是计算完后在最后多插一行计算整体的 
+
+
+
+### 2.having
+
+用来过滤数据、和group by 有关系
+
+一旦过滤条件中使用了聚合函数，则必须使用having来代替where否则报错 \ 要是where内部过滤条件有聚合函数则无法使用，只能用having 
+
+如where max(xxx)>xxx就是错误的
+
+如果出现having，having必须声明在group by后面
+
+having作用相当于比较每组根据聚合函数算出来的东西
+
+所以没有group by使用having意义不大
+
+
+
+但是where执行效率比havin高。所以能用where就用where
+
+
+
+### having和where对比：
+
+having使用范围更广
+
+在过滤条件中没有聚合函数时，where执行效率比having更高  
+
+所以能用where就用where
+
+
+
+### sql底层执行原理
+
+![784e2a22-05c9-49c6-b210-f2dfeaf332eb](mysql_screenshoot/784e2a22-05c9-49c6-b210-f2dfeaf332eb.png)
+
+![660da50b-1bf8-4677-a7ac-5fe0dda201e3](mysql_screenshoot/660da50b-1bf8-4677-a7ac-5fe0dda201e3.png)
+
+
+
+## sql执行过程
+
+![7941920c-e4fd-421f-8b7e-ebc477a0e725](mysql_screenshoot/7941920c-e4fd-421f-8b7e-ebc477a0e725.png)
+
+每个大模块内部是按顺序执行的
+
+from...->链接->where->分组->having->select->distinct->order by->limit
+
+where效率高原因：可以减少后面group by和having再过滤的工作量
+
+如10w条经过where就剩10条那后面就很快就能执行完
+
+如果没有where后面group by要对10w条数据进行分组，组内还要根据having进行排序、计算什么的但是最后只留下两条数据
+
+这样就浪费了很多计算
+
+因为聚合函数是分组后才能用而where在分组前执行所以where不能使用聚合函数
+
+
+
 
 
 
