@@ -345,6 +345,10 @@ LIMIT后第一个参数是偏移量，即往后多少条数据开始查询。20�
 
 
 
+#limit的参数没有小括号
+
+
+
 ### WHERE  ORDER BY   LIMIT $声明$顺序：
 
 LIMIT 在 ORDER BY 后面，ORDER BY 在WHERE 后面
@@ -425,6 +429,8 @@ LIMIT XXX OFFSET XXX
 
 外连接分类：左外连接、右外连接、满外连接
 
+
+
 ### SQL92的外连接：
 
 使用+
@@ -433,7 +439,11 @@ LIMIT XXX OFFSET XXX
 
 哪边短哪边给个+号
 
+
+
 ### SQL99语法使用 JOIN....ON 实现多表查询
+
+
 
 #### 内连接：
 
@@ -441,9 +451,15 @@ LIMIT XXX OFFSET XXX
 
 还有的话再 join 再 on
 
+
+
 #### 外连接：
 
 左外连接：left join 、右外：right join
+
+
+
+
 
 #### 满外连接：
 
@@ -458,6 +474,14 @@ union all：效率高，但交集会重复
 所以当没有交集用union all效率最高
 
 有交集用union保证数据不重复
+
+
+
+#union前后连接的表名顺序最好是相同的，否则查出来两次查询显示顺序不同
+
+
+
+
 
 ![loading-ag-658](mysql_screenshoot/a9aac8f7-0451-4986-ad38-a8500d1c7e1b.png?msec=1687332037955)
 
@@ -601,6 +625,11 @@ GET_FORMATE传入的参数：
 
 ![75dccf4e-a970-4463-8f25-eaea7b521ca0](mysql_screenshoot/75dccf4e-a970-4463-8f25-eaea7b521ca0.png)
 
+### 日记函数心得
+
+格式化为大写Y小写m小写d,且是对日期格式的变量进行操作，是由日期转换成字符串，自己输入的字符串要用STR_TO_DATE
+DATE_FORMAT(date,format)是将日期变量转换成字符串的函数，别搞混了方向
+
 
 
 ## 流程控制函数
@@ -658,6 +687,10 @@ md5加密后不可逆，但是输入相同字符串生成的是相同的密文�
 ![4e168b03-677d-41ae-9b47-9c8f58b60375](mysql_screenshoot/4e168b03-677d-41ae-9b47-9c8f58b60375.png)
 
 ## 常用聚合函数：
+
+mysql中聚合函数不能嵌套使用
+
+
 
 ### avg/sum
 
@@ -764,6 +797,237 @@ where效率高原因：可以减少后面group by和having再过滤的工作量
 这样就浪费了很多计算
 
 因为聚合函数是分组后才能用而where在分组前执行所以where不能使用聚合函数
+
+
+
+## 错题：数有没有员工时对行进行count，而不是员工id
+
+7.查询所有部门的名字，location_id，员工数量和平均工资，并按平均工资降序
+
+#因为要所有部门，所以要使用外连接,而此时count不应该是行数，而是有多少个employee_id，因为没有员工他也会有一行SELECT d.department_name,d.location_id,count(employee_id),AVG(e.salary) avg_salFROM departments d LEFT JOIN employees e ON d.department_id=e.department_idGROUP BY e.department_id,d.department_name,d.location_idORDER BY avg_sal DESC
+
+
+
+# 子查询
+
+![0913c095-f562-4a37-a6e0-9defb8bb8a91](mysql_screenshoot/0913c095-f562-4a37-a6e0-9defb8bb8a91.png)
+
+
+
+## 子查询分类：
+
+### 单行子查询、多行子查询
+
+![ea046268-1e87-4f53-8ef8-0514380dc0a9](mysql_screenshoot/ea046268-1e87-4f53-8ef8-0514380dc0a9.png)
+
+子查询编写技巧：
+
+1.从里往外写 2.从外往里写
+
+### 相关子查询、不相关子查询
+
+相关子查询：子查询的条件随着主查询改变而改变,也就是子查询和主查询有相关性
+
+
+
+### 子查询中空值问题：
+
+子查询空值不会报错，但是查不出东西
+
+
+
+## 多行子查询
+
+![aab97c0e-27fa-4567-bf4b-456f0f152587](mysql_screenshoot/aab97c0e-27fa-4567-bf4b-456f0f152587.png)
+
+ANY:返回结果中任意一个,只要有一个满足就行
+
+ALL：返回结果中全部，要全部满足才行
+
+
+
+可以把查出来的信息当成一张新表，外面再套一层select  from查询这张新表的数据。但是要给新表取一个别名
+
+![e592446c-5be7-411b-a4ec-911720bb60ec](mysql_screenshoot/e592446c-5be7-411b-a4ec-911720bb60ec.png)
+
+多行子查询空值问题
+
+
+
+如 1 NOT IN(2,NULL)-->1!=2&&1!=null,而1！=null返回的永远是null
+
+所以not in中如果有null就一定查不到东西。
+
+所以在使用多行子查询时，一定要把查询结果中带有null的去掉
+
+
+
+## 相关子查询
+
+练习：找出部门中比部门平均工资高的员工信息
+
+![54e681e5-8d60-450b-9ef3-c5ce72283584](mysql_screenshoot/54e681e5-8d60-450b-9ef3-c5ce72283584.png)
+
+在select中，除了group by和limit之外，其他位置都可以声明子查询
+
+
+
+
+
+找出在员工id在jobhistory中出现两次以上的员工id，姓名，等信息
+
+```sql
+#法1：from内子查询
+SELECT e.employee_id,e.last_name,e.job_id
+FROM employees e ,
+(
+SELECT employee_id,count(employee_id) changeTIME
+FROM job_history jh 
+GROUP BY employee_id
+) job_times
+WHERE job_times.employee_id = e.employee_id AND changeTIME>=2
+
+#法二：相关子查询
+SELECT employee_id,last_name,job_id
+FROM employees e
+WHERE 2<=(
+						SELECT count(*)
+						FROM job_history jh
+						WHERE e.employee_id=jh.employee_id
+					)
+```
+
+
+
+
+
+### exist、not exist
+
+和子查询中的表进行连接，如果连接上了exist就成立，如果没连上not exist就成立
+
+
+
+
+
+错题：
+
+  #8.查询平均工资最低的部门信息(嵌套子查询方式，拼了大半小时看几眼答案才拼出来)
+
+```sql
+SELECT d.* ,AVG(salary)
+FROM departments d,employees e
+WHERE d.department_id=e.department_id
+GROUP BY e.department_id
+HAVING AVG(salary)<=ALL(
+                        select AVG(salary)
+                        FROM employees
+                        GROUP BY department_id
+                        );
+#法二：嵌套子查询，根据查部门平均工资表找到最低的,因为where内无法用聚合函数所以只能找到id，这里没必要用聚合函数
+SELECT *
+FROM departments
+where department_id=(
+                      SELECT department_id
+                      FROM employees
+                      GROUP BY department_id
+                      HAVING avg(salary)=(
+                                             SELECT MIN(avg_sal)
+                                             FROM (
+                                                     SELECT AVG(salary) avg_sal
+                                                     FROM employees
+                                                     GROUP BY department_id
+                                                   ) t_avg_sal
+                                           )
+                      );
+```
+
+#9.查询平均工资最低的部门信息和该部门的平均工资（相关子查询）上面一题基础上在后面再加一条平均工资的字段
+
+主要是没想到原来是输出平均工资需要用子查询
+
+```sql
+
+SELECT d.*,(SELECT AVG(salary) FROM employees WHERE d.department_id=department_id) avg_sal
+FROM departments d
+WHERE department_id = (
+                                                SELECT department_id
+                                                FROM employees
+                                                GROUP BY department_id
+                                                HAVING AVG(salary)<= ALL(
+                                                                                                    SELECT AVG(salary)
+                                                                                                    FROM employees
+                                                                                                    GROUP BY department_id
+                                                                                                )
+                                            );
+```
+
+
+
+```sql
+#15. 查询部门的部门号，其中不包括job_id是"ST_CLERK"的部门号
+#这种方式不会返回没有员工的部门,不符合题意
+SELECT DISTINCT d.department_id,e.job_id
+FROM employees e RIGHT JOIN departments d
+ON e.department_id=d.department_id
+WHERE e.job_id <>"ST_CLERK"
+
+SELECT department_id
+FROM departments d
+WHERE NOT EXISTS(
+SELECT *
+FROM employees e
+WHERE d.department_id = e.department_id 
+AND e.job_id = "ST_CLERK"
+);
+
+
+
+```
+
+
+
+
+```sql
+#18.查询各部门中工资比本部门平均工资高的员工的员工号, 姓名和工资（相关子查询）
+
+SELECT employee_id,last_name,salary
+FROM employees e1
+WHERE salary>(
+SELECT AVG(salary)
+FROM employees e2
+#这里相当于已经分好组了，每次avg的内容都是一个部门里面的
+WHERE e1.department_id=e2.department_id
+                        );
+
+```
+
+
+
+```sql
+#19.查询每个部门下的部门人数大于 5 的部门名称（相关子查询）
+SELECT department_name
+FROM departments
+WHERE department_id IN(
+			SELECT department_id
+			FROM employees
+			GROUP BY department_id
+			HAVING count(employee_id)>5
+			);
+
+SELECT d.department_name
+FROM departments d
+WHERE 5<(
+			SELECT count(employee_id)
+			FROM employees e
+			WHERE e.department_id=d.department_id
+			);
+```
+
+
+
+
+
+
 
 
 
