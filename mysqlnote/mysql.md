@@ -891,10 +891,10 @@ WHERE job_times.employee_id = e.employee_id AND changeTIME>=2
 SELECT employee_id,last_name,job_id
 FROM employees e
 WHERE 2<=(
-						SELECT count(*)
-						FROM job_history jh
-						WHERE e.employee_id=jh.employee_id
-					)
+                        SELECT count(*)
+                        FROM job_history jh
+                        WHERE e.employee_id=jh.employee_id
+                    )
 ```
 
 
@@ -986,7 +986,6 @@ AND e.job_id = "ST_CLERK"
 
 
 
-
 ```sql
 #18.查询各部门中工资比本部门平均工资高的员工的员工号, 姓名和工资（相关子查询）
 
@@ -1008,40 +1007,529 @@ WHERE e1.department_id=e2.department_id
 SELECT department_name
 FROM departments
 WHERE department_id IN(
-			SELECT department_id
-			FROM employees
-			GROUP BY department_id
-			HAVING count(employee_id)>5
-			);
+            SELECT department_id
+            FROM employees
+            GROUP BY department_id
+            HAVING count(employee_id)>5
+            );
 
 SELECT d.department_name
 FROM departments d
 WHERE 5<(
-			SELECT count(employee_id)
-			FROM employees e
-			WHERE e.department_id=d.department_id
-			);
+            SELECT count(employee_id)
+            FROM employees e
+            WHERE e.department_id=d.department_id
+            );
 ```
 
 
 
+# DDL语句
+
+## 多表同时删除DELETE m,d FROM xxx JOIN xxx ON xxx
+
+如
+
+```sql
+DELETE e,u
+FROM my_employees e 
+JOIN users uON e.userid=u.userid
+WHERE e.userid = 'Bbiri'
+```
+
+
+
+添加数据时要是某个字段没有值应该填入null，否则无法添加
+
+
+
+# 数据类型
+
+![02057b35-4f49-4718-bb6e-49ff21ca4122](mysql_screenshoot/02057b35-4f49-4718-bb6e-49ff21ca4122.png)
+
+![c58ca48b-611f-44ad-a13c-7596e9535ad1](mysql_screenshoot/c58ca48b-611f-44ad-a13c-7596e9535ad1.png)
+
+在指定字段属性后加个unsigned表示无符号数
+
+## 表和具体字段也可以指定字符集
+
+给表设置字符集在写完字段之后
+
+给字段设置在字段属性后
+
+CREATE TABLE tb(
+
+name varchar(20) CHARACTER SET$ 'utf8'$
+
+)CHARACTER SET $'utf8'$
+
+
+
+## 整型
+
+![645a6571-b941-41b4-97a8-64f09093a638](mysql_screenshoot/645a6571-b941-41b4-97a8-64f09093a638.png)
+
+插入数据时超出数据范围会报错
+
+
+
+### ZeroFill: (mysql8.0中已经过时)
+
+在指定数据显示宽度后如果跟上了ZeroFill，如果插入数据宽度不够显示宽度，就会在高位补0来使数据宽度达到定义时的宽度
+
+![e6a04c32-0083-4afc-866a-44625c0d1ddf](mysql_screenshoot/e6a04c32-0083-4afc-866a-44625c0d1ddf.png)
+
+其中f3是类型为int(5) ZeroFill
+
+### 适用场景
+
+![295a4fa5-a8d6-437a-9081-9c01c6d5d6fb](mysql_screenshoot/295a4fa5-a8d6-437a-9081-9c01c6d5d6fb.png)
+
+### 选择：优先保证数据不会超出范围，再考虑节省空间
+
+![cd994d57-0862-4b3c-bd9e-a5649f5cdb05](mysql_screenshoot/cd994d57-0862-4b3c-bd9e-a5649f5cdb05.png)
+
+
+
+## 浮点型
+
+![89917582-4261-4afa-bb97-693f752309d2](mysql_screenshoot/89917582-4261-4afa-bb97-693f752309d2.png)
+
+
+
+![62ef738e-f291-449f-91fc-d1de5c2c7fd8](mysql_screenshoot/62ef738e-f291-449f-91fc-d1de5c2c7fd8.png)
+
+也就是说浮点数没必要定义成无符号
+
+
+
+![3648d17a-8c24-4127-96cc-cc015c81a1b7](mysql_screenshoot/3648d17a-8c24-4127-96cc-cc015c81a1b7.png)
+
+
+
+小数位超过设置的长度，会发生四舍五入
+
+整数位超过设置长度，会报错
+
+
+
+MYSQL8.0中DECIMAL类型比float和double精度更高,因为是字符串存储的
+
+![a5b52429-f886-4549-b616-38f5691058e6](mysql_screenshoot/a5b52429-f886-4549-b616-38f5691058e6.png)
+
+![66f16904-f55a-47a4-af11-ea14941c21a9](mysql_screenshoot/66f16904-f55a-47a4-af11-ea14941c21a9.png)
+
+浮点数存储数据更多，但是会丢失一点精度，decimal占用空间稍大，但是绝对精准
+
+
+
+![af42fac8-145f-4844-a2b8-fe93a3003b89](mysql_screenshoot/af42fac8-145f-4844-a2b8-fe93a3003b89.png)
+
+开发中一直都是愿意使用空间换取可靠性的，可靠性一旦出问题付出的代价比购买存储设备大多了
+
+
+
+![4989c36f-665c-47be-9c83-bd2e0e314687](mysql_screenshoot/4989c36f-665c-47be-9c83-bd2e0e314687.png)
+
+
+
+## 日期类型
+
+![ebdf221c-a76b-4312-a38f-d374a135f03f](mysql_screenshoot/ebdf221c-a76b-4312-a38f-d374a135f03f.png)
+
+![d986bca7-e822-4753-ad46-6da249715dd4](mysql_screenshoot/d986bca7-e822-4753-ad46-6da249715dd4.png)
+
+2位格式可以忽略、已经没有太大意义,还很复杂
+
+year默认是四位，不用指定
+
+year最大2155，最小1901
+
+![ed774335-2271-40e3-b710-dc2e0c8858b5](mysql_screenshoot/ed774335-2271-40e3-b710-dc2e0c8858b5.png)
+
+直接一堆数字写进去会进行隐式转换
+
+![b67421db-e3e1-492a-8c93-aa03143d6faf](mysql_screenshoot/b67421db-e3e1-492a-8c93-aa03143d6faf.png)
+
+前面time、date各3字节
+
+DATE_TIME:8字节
+
+TIMESTAMP：4字节
+
+now()默认是datetime格式，但是根据插入的数据类型会自动进行隐式转换
+
+![3692ea47-3055-4723-b4c9-ba002aeba9bf](mysql_screenshoot/3692ea47-3055-4723-b4c9-ba002aeba9bf.png)
+
+timestamp虽然占的空间少，但是可以设置的范围也有限
+
+@符分割时间字符串中年月日时分秒可读性更强
+
+![e9ec0377-71b7-4ab8-814d-156745a360a5](mysql_screenshoot/e9ec0377-71b7-4ab8-814d-156745a360a5.png)
+
+### timestamp和datetime区别：
+
+timestamp会根据用户所在时区进行转换，datetime输入是什么输出就是什么
+
+如输入时时区是东八区，后面系统改成东九区，timestamp类型就会自动加一个小时
+
+timestamp底层是毫秒数、按照时间排序时timestamp速度会更快
+
+![e425c05f-8f62-4b25-8fb6-d87a4489d339](mysql_screenshoot/e425c05f-8f62-4b25-8fb6-d87a4489d339.png)
+
+开发中使用datetime最多，因为范围最广、存储最完整
+
+![c16361bd-539e-43f3-adc7-724403445cfd](mysql_screenshoot/c16361bd-539e-43f3-adc7-724403445cfd.png)
+
+## 文本字符类型
+
+![c9f1381b-92d5-42ce-be41-64fe5b72ac77](mysql_screenshoot/c9f1381b-92d5-42ce-be41-64fe5b72ac77.png)
+
+![bd688d4b-55d4-4205-9916-1070b34f7039](mysql_screenshoot/bd688d4b-55d4-4205-9916-1070b34f7039.png)
+
+varchar需要额外一字节空间来记录当前存储了多少字节数据，从而达到可变长度的目的
+
+char类型指定多少就一只占用多少空间，如果在长度确定的情况下char更好
+
+char在添加时若没有达到长度则会在右边补空格，而在查询时在自动去掉
+
+但是如果是手动在右边添加空格查询时也是会被去掉的
+
+![dea5a8a2-2f07-44b9-9939-31051d01a36d](mysql_screenshoot/dea5a8a2-2f07-44b9-9939-31051d01a36d.png)
+
+### varchar优点
+
+指定多少就能存多少字符，所以占用的空间不一定是指定大小的字节数
+
+最大是65535字节
+
+如果数据库默认编码是utf8，这个数值会自动转换成中文字符大小，即65535/3=21845
+
+虽然varchar需要一个字节计算存储了多少个字符。但是大多数情况下都能比char更节省空间，因为只给数据需要的大小
+
+
+
+### char优点
+
+由于是固定长度的，所以可以实现随机存取，检索效率高，所以适用在数据小，检索速度要求高的场景
+
+![4137369a-69f3-44d5-b931-55ac5debec6c](mysql_screenshoot/4137369a-69f3-44d5-b931-55ac5debec6c.png)
+
+![71918bf4-8d41-4874-921e-f3949db68c1e](mysql_screenshoot/71918bf4-8d41-4874-921e-f3949db68c1e.png)
+
+## TEXT类型：适合存储大量文本、文章、小说等
+
+![2d9d7f8d-3756-4f2e-a33e-b78594c8b248](mysql_screenshoot/2d9d7f8d-3756-4f2e-a33e-b78594c8b248.png)
+
+![d0d5b243-09de-494d-bd3e-618889fec165](mysql_screenshoot/d0d5b243-09de-494d-bd3e-618889fec165.png)
+
+## 枚举类型：
+
+![d6497d66-b491-4f62-9939-f50412c6fb49](mysql_screenshoot/d6497d66-b491-4f62-9939-f50412c6fb49.png)
+
+![adca85e5-8ad4-49f1-9c7c-50861ffd1354](mysql_screenshoot/adca85e5-8ad4-49f1-9c7c-50861ffd1354.png)
+
+只要这个字段设置成枚举类，就只能从创建时设置的数据选一个，填其他东西都是报错
+
+## Set类型
+
+![68d9388d-0f79-4402-b8fb-1f6bbcfa6f39](mysql_screenshoot/68d9388d-0f79-4402-b8fb-1f6bbcfa6f39.png)
+
+SET:可以从中选0个或多个，比枚举灵活一点
+
+![c851cc8f-7dba-4102-889f-6d41a2bd4842](mysql_screenshoot/c851cc8f-7dba-4102-889f-6d41a2bd4842.png)
+
+存储策略和char、varchar类似
+
+binary固定，空的补，varbinary可变长度，要多少给多少
+
+![a745740e-7039-4c2e-8938-9d06ccf5f3f5](mysql_screenshoot/a745740e-7039-4c2e-8938-9d06ccf5f3f5.png)
+
+类似test，但是存储二进制数据，如二进制存储图片、音视频等
+
+但实际开发中图片、音视频都是直接存储在磁盘，不需要存在数据库
+
+
+
+![b6165bee-d8c3-454c-b6b9-0d162b60ffb6](mysql_screenshoot/b6165bee-d8c3-454c-b6b9-0d162b60ffb6.png)
+
+![ae326754-425e-482b-a665-c14ea18c17b9](mysql_screenshoot/ae326754-425e-482b-a665-c14ea18c17b9.png)
+
+![7c1f666f-3ed4-4007-9edc-bea5ac0991f7](mysql_screenshoot/7c1f666f-3ed4-4007-9edc-bea5ac0991f7.png)
+
+
+
+# 约束
+
+为什么需要约束？：为了保证数据的完整性
+
+什么叫约束？
+
+![f9d6851e-0231-4234-9e1c-5818fd75b8f9](mysql_screenshoot/f9d6851e-0231-4234-9e1c-5818fd75b8f9.png)
+
+## 约束的分类
+
+
+
+1.约束的字段个数区分
+
+单列约束、多列约束
+
+
+
+2.约束的作用范围
+
+列级约束、表级约束
+
+列级约束：将此约束声明在对应字段后
+
+表级约束：在表中所有字段都声明完，在在最后声明的约束
+
+
+
+3.约束的作用
+
+
+
+如何添加约束？
+
+创建表CREATE TABLE时添加
+
+修改表ALTER TABLE时可增加、删除约束
+
+
+
+## 非空约束：NOT NULL,只能针对某个列设置
+
+![ba85978c-8a60-4f87-b594-6e4a19e7e0b8](mysql_screenshoot/ba85978c-8a60-4f87-b594-6e4a19e7e0b8.png)
+
+## 唯一性约束
+
+![cb115193-23bb-4b5b-8a99-b954597424cc](mysql_screenshoot/cb115193-23bb-4b5b-8a99-b954597424cc.png)
+
+
+
+表级约束语法：创建表声明完字段后，最后一个字段接逗号后接着写约束，
+
+Constraint 约束名 什么约束 作用的字段
+
+可以向声明为unique的字段添加null值
+
+null值不算unique，可以有多个null。都是空不代表相同
+
+
+
+添加约束写法和表级约束是一样的
+
+
+
+### 复合唯一性约束：
+
+同时给多个字段添加唯一性约束，此时相当于多个字段组成一个整体，只要有一个字段不相同就可以添加
+
+![0c858f8b-f659-42ab-b3c4-71f46f73eea5](mysql_screenshoot/0c858f8b-f659-42ab-b3c4-71f46f73eea5.png)
+
+实际应用：学号和课程作符合唯一约束，即同一个学生不能重复选一门课
+
+
+
+### 删除唯一性约束
+
+通过删除唯一性约束来删除唯一性索引
+
+复合唯一性约束若没指定名字 则默认约束名为声明复合约束的第一个字段
 
 
 
 
 
+## 主键约束
+
+主键约束列不允许重复，也不允许出现空值,相当于非空约束+唯一性约束
+
+![92c84074-f751-4ebc-abc1-3bc1217f91d1](mysql_screenshoot/92c84074-f751-4ebc-abc1-3bc1217f91d1.png)
+
+主键表级约束：
+
+CONSTRAINT 约束名 PRIMARY KEY (约束字段)
+
+
+
+### 主键复合约束：创建方式和上面复合唯一性约束一样
+
+也是和上面差不多，复合的字段只要有其中一个不相同且都不是null就可以(主键的复合约束所有复合的字段都不能是null)
+
+
+
+### 创建表后添加主键约束
+
+ALTER TABLE 表名
+
+ADD PRIMARY KEY (字段名)
+
+
+
+### 删除主键约束，不需要知道主键名（实际开发不会使用,因为生成表后，里面所有数据都是根据主键生成的b+树，如果删了那就白费了,无法根据主键索引查找数据）
+
+ALTER TABLE 表名 DROP PRIMARY KEY
+
+
+
+## 自增列：auto_increment
+
+语法：
+
+CREATE TABLE 表名（
+
+id int PRIMARY KEY AUTO_INCREMENT
+
+）
+
+![abaccc3c-e5ca-480c-90af-57b8a7a0c51c](mysql_screenshoot/abaccc3c-e5ca-480c-90af-57b8a7a0c51c.png)
+
+主要是给主键使用
+
+向自增主键字段上添加0或者null时会自动增长到下一个数，而不是把0或null添加进去
+
+写其他值都会直接填进去。
+
+要是出现了断层，则会从最大的数值往后增长，而不会填补中间空缺
+
+
+
+### 在创建表之后增加自增
+
+ALTER TABLE
+
+MODIFY id int AYTO_INCREMENT
+
+
+
+### 删除自增,在修改时去掉AUTO_INCREMENT就可以了
+
+ALTER TABLE
+
+MODIFY id int 
+
+
+
+### 新特性：自增变量的持久化
+
+5.7中自增的下一个数存储在内存中，重启后就要重新读表才知道下一个自增是谁
+
+8.0中自增下一个数被永久保存在磁盘中，当然运行时也在内存中。重启服务器后会从磁盘中读取下一个自增是哪个数，所以即使删了末尾两个,下一个自增也不会再写在上两个删除的地方
+
+![2edb8317-4829-4668-b960-79411f53ba03](mysql_screenshoot/2edb8317-4829-4668-b960-79411f53ba03.png)
 
 
 
 
 
+## 外键约束
+
+![d5a913de-bf4f-46cd-a45c-fb8578d55ba4](mysql_screenshoot/d5a913de-bf4f-46cd-a45c-fb8578d55ba4.png)
+
+子表要和主表产生外键约束，约束的必须是主表的主键字段。
+
+最好自己指定外键名，因为默认不是字段名，到时要查也麻烦
+
+外键与主键名可以不一样，类型必须一样
+
+创建外键约束时，默认给外键所在列创建普通索引。
+
+### 表级外键约束语法：
+
+CONSTRAINT 外键名 FOREIGN KEY (从表字段名) REFERENCE （主表主键名）
+
+外键关联的主表字段一定要是主键或者唯一约束的字段
 
 
 
+### 约束等级
+
+![5339f8f7-1ce0-4f96-ac2d-a1b98c52bb0b](mysql_screenshoot/5339f8f7-1ce0-4f96-ac2d-a1b98c52bb0b.png)
+
+其实就是主表从表数据是否同步更新、如何更新的问题
+
+CASCADE:同步主表的操作
+
+SET NULL:主表操作后将外键对应字段设置为null
+
+RESTRICT:从表有对应数据时不让主表进行操作
+
+可以单独设置更新时怎样，删除时怎样如
+
+CONSTRAINT 外键名 FOREIGN KEY (从表字段名) REFERENCE （主表主键名）ON UPDATE CASCADE ON DELETE SET NULL
+
+可以不用CONSTRAINT,这个关键字是用来设置外键别名的
+
+![bf948480-c6d8-4dce-a67d-a55f790a2841](mysql_screenshoot/bf948480-c6d8-4dce-a67d-a55f790a2841.png)
 
 
 
+### 删除外键约束
 
+ALTER TABLE DROP FOREIGN KEY 外键名
+
+
+
+### 删除外键约束对应的普通索引
+
+1.SHOW INDEX FROM 表名
+
+2.ALTER TABLE 表名 DROP INDEX 约束名
+
+这里删除索引也是根据外键约束名删
+
+### 使用建议
+
+![715dce0f-fc14-4853-8a45-6e74258ed671](mysql_screenshoot/715dce0f-fc14-4853-8a45-6e74258ed671.png)
+
+![627f455b-d2bc-4bb5-8652-91ab49aba828](mysql_screenshoot/627f455b-d2bc-4bb5-8652-91ab49aba828.png)
+
+![ab98bc79-af81-4772-a3c7-3e61473c2155](mysql_screenshoot/ab98bc79-af81-4772-a3c7-3e61473c2155.png)
+
+总结：应该在java代码逻辑中体现这种约束而不是依赖mysql的外键。所以不建议使用
+
+
+
+## CHECK 约束，创建表时加在字段后
+
+5.7不支持check
+
+添加数据时判断一下是否符合，符合则添加，不符合则不添加
+
+
+
+## DEFAULT约束，创建表时加在字段后
+
+在输入null或者没有数据时，默认添加的值。
+
+![e006468e-de65-479a-96a0-3bab12ae566d](mysql_screenshoot/e006468e-de65-479a-96a0-3bab12ae566d.png)
+
+删除约束：ALTER TABLE时不指定DEFAULT就可以
+
+# 视图
+
+![1e444594-f0b5-4009-8feb-7cf696e0b115](mysql_screenshoot/1e444594-f0b5-4009-8feb-7cf696e0b115.png)
+
+
+
+## 创建视图：
+
+和复制表一样，只不过table改成VIEW 。CREATE VIEW 视图名 as select（查询想要放到视图的字段和数据）... 
+
+然后对视图操作，更改数据后原表的数据也会跟着更改
+
+视图其实就是把原表东西展示出来，修改视图就是修改原表
+
+
+
+![ee36ff55-45b4-4f1e-a4c0-7501fd58e359](mysql_screenshoot/ee36ff55-45b4-4f1e-a4c0-7501fd58e359.png)
+
+![aa25819b-40fd-45ec-b7d0-a96f3a808e75](mysql_screenshoot/aa25819b-40fd-45ec-b7d0-a96f3a808e75.png)
+
+小型项目不推荐使用视图
 
 
 
