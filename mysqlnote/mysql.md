@@ -1531,6 +1531,218 @@ ALTER TABLE DROP FOREIGN KEY 外键名
 
 小型项目不推荐使用视图
 
+可以基于视图继续创建视图。无限套娃
+
+## 查看视图：
+
+查看数据库中所有表和视图
+
+SHOW TABLES
+
+
+
+### 查看视图结构
+
+DESC/DESCRIBE 视图名
+
+
+
+### 查看视图属性信息
+
+SHOW TABLE STATUS LIKE '视图名'
+
+
+
+### 查看视图定义信息
+
+SHOW CREATE VIEW 视图名
+
+
+
+## 更新视图数据，其实就是对源表数据进行修改
+
+UPDATE 视图名 SET xxx WHERE xxx ,语法和修改表一样
+
+![3a21fdb4-b9b6-44c6-8be3-5c6e9445809f](mysql_screenshoot/3a21fdb4-b9b6-44c6-8be3-5c6e9445809f.png)
+
+视图主要是用来查询的，别用来干其他的就行了
+
+## 修改视图
+
+1.
+
+在创建视图时加个OR REPLACE就可以修改视图
+
+
+
+2.
+
+ALTER VIEW
+
+
+
+## 删除视图：
+
+DROP VIEW IF EXISTS
+
+
+
+## 视图作用
+
+![db533156-001e-46ac-8b27-877ffd347e6d](mysql_screenshoot/db533156-001e-46ac-8b27-877ffd347e6d.png)
+
+在对表没有访问权限情况下给用户需要的字段的视图的权限，可以访问数据也可以对不想让用户知道的字段起到保密作用
+
+![5022ac08-aeea-48d8-9578-0c27f82d01f5](mysql_screenshoot/5022ac08-aeea-48d8-9578-0c27f82d01f5.png)
+
+
+
+## 缺点：
+
+![1d059c67-a378-426e-a17f-f36e3eb39e04](mysql_screenshoot/1d059c67-a378-426e-a17f-f36e3eb39e04.png)
+
+
+
+# 存储过程与存储函数
+
+![3ee5dcfa-62d6-4dbb-9202-47fa9aecd732](mysql_screenshoot/3ee5dcfa-62d6-4dbb-9202-47fa9aecd732.png)
+
+![f773d8a3-d9e9-44a8-acea-39be01c1c132](mysql_screenshoot/f773d8a3-d9e9-44a8-acea-39be01c1c132.png)
+
+![1af16f17-85c7-4fd3-8ae0-61e6d333f0ca](mysql_screenshoot/1af16f17-85c7-4fd3-8ae0-61e6d333f0ca.png)
+
+IN:传入的参数
+
+OUT:返回
+
+
+
+![98ddf697-615f-416d-9c27-e4e0ebe5878e](mysql_screenshoot/98ddf697-615f-416d-9c27-e4e0ebe5878e.png)
+
+![5c02abef-a518-4037-bcdd-f8c1414f3bd0](mysql_screenshoot/5c02abef-a518-4037-bcdd-f8c1414f3bd0.png)
+
+
+
+DELIMITER : 指定以哪个符号作为结束符号
+
+delimiter \$:以美元符号作为结束符
+
+存储过程调用：CALL 存储过程名
+
+存储过程名
+
+中间begin end 就像java函数名左花括号右花括号
+
+有需要返回的就 SELECT INTO 返回那个参数就可以
+
+![f8e09d6f-8d7b-473b-86ab-b1174b31dcfd](mysql_screenshoot/f8e09d6f-8d7b-473b-86ab-b1174b31dcfd.png)
+
+传入参数时在参数前加个@代表是用户定义的参数
+
+OUT时这个参数相当于一个表，SELECT他就可以获得存储过程返回的表或其他东西
+
+![6e3f0b8c-b300-470c-9f90-ba57f4dd0923](mysql_screenshoot/6e3f0b8c-b300-470c-9f90-ba57f4dd0923.png)
+
+INOUT:传入传出都是使用那个参数，不用定义多个参数
+
+![713b45d1-0d0c-4542-b942-5ef3f630d73d](mysql_screenshoot/713b45d1-0d0c-4542-b942-5ef3f630d73d.png)
+
+
+
+## 函数
+
+![84e321f9-e982-43fc-9c7b-f1c9cf4ca0a9](mysql_screenshoot/84e321f9-e982-43fc-9c7b-f1c9cf4ca0a9.png)
+
+函数参数部分只有输入参数
+
+输出通过return返回
+
+CHARACTERISTICS的定义与上面存储过程类似
+
+![df77b8ad-d12e-44a1-b9f8-69bec138e6ef](mysql_screenshoot/df77b8ad-d12e-44a1-b9f8-69bec138e6ef.png)
+
+SET GLOBAL log_bin_trust_function_creators = 1;
+
+例：
+
+![afe8385c-e82f-4625-86e9-469ca994f299](mysql_screenshoot/afe8385c-e82f-4625-86e9-469ca994f299.png)
+
+
+
+## 存储函数和存储过程对比
+
+![aebebb6b-461a-4f16-a85a-0b23876c6cb2](mysql_screenshoot/aebebb6b-461a-4f16-a85a-0b23876c6cb2.png)
+
+
+
+
+
+## 存储过程和函数的查看、修改、删除
+
+![a43ee80a-4ade-4aa6-84a6-af1ea33eae47](mysql_screenshoot/a43ee80a-4ade-4aa6-84a6-af1ea33eae47.png)
+
+
+
+## 存储过程、存储函数的修改、删除
+
+### 查看
+
+![6f6e6b37-2aa9-47df-b522-c9669f063977](mysql_screenshoot/6f6e6b37-2aa9-47df-b522-c9669f063977.png)
+
+![3da405d2-fdcf-4bed-8d0b-3743f30b67d7](mysql_screenshoot/3da405d2-fdcf-4bed-8d0b-3743f30b67d7.png)
+
+### 修改
+
+![25be5986-f89f-4042-b44c-b959dadbafa5](mysql_screenshoot/25be5986-f89f-4042-b44c-b959dadbafa5.png)
+
+#### 存储过程无法修改存储/函数体,只能改一些特性
+
+
+
+#### 如果要改里面执行过程需要先删除再重新创建
+
+
+
+## 删除
+
+![e9b133b7-7bf0-4667-a43f-e01ec3d0de07](mysql_screenshoot/e9b133b7-7bf0-4667-a43f-e01ec3d0de07.png)
+
+## 开发建议
+
+![82f0fd10-0c77-4c23-96bf-ab10a977f029](mysql_screenshoot/82f0fd10-0c77-4c23-96bf-ab10a977f029.png)
+
+![a430d048-a323-4088-a9db-11efe336c73b](mysql_screenshoot/a430d048-a323-4088-a9db-11efe336c73b.png)
+
+
+
+![1ab403d6-1ac1-47ac-b154-27950b913c36](mysql_screenshoot/1ab403d6-1ac1-47ac-b154-27950b913c36.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
