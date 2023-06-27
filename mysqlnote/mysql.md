@@ -1719,19 +1719,352 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 
 
 
+# 变量：
+
+![2fb7e6c5-6b91-4ec6-82ff-b7a81af5517b](mysql_screenshoot/2fb7e6c5-6b91-4ec6-82ff-b7a81af5517b.png)
+
+![d53ebdb6-6e4c-4e11-9d28-305baf13dce3](mysql_screenshoot/d53ebdb6-6e4c-4e11-9d28-305baf13dce3.png)
+
+全局系统变量修改了，其他会话对应变量也会改
+
+绘画系统变量改了就算与其他会话重叠其他也不会改
+
+
+
+## 系统变量：
+
+### 分两类：全局系统变量、会话系统变量
+
+![e90b9342-93e3-4f68-aa41-cc9d203a9de6](mysql_screenshoot/e90b9342-93e3-4f68-aa41-cc9d203a9de6.png)
+
+SELECT @@ 系统变量名
+
+![83bfa882-4339-47d2-820a-c1d67e2132e5](mysql_screenshoot/83bfa882-4339-47d2-820a-c1d67e2132e5.png)
+
+配置文件修改变量值
+
+命令行set命令修改
+
+但是通过SET 方式修改的变量一旦重启mysql服务就失效或还原成默认了
+
+![b32bc145-41ea-4809-840a-523c73a692c1](mysql_screenshoot/b32bc145-41ea-4809-840a-523c73a692c1.png)
+
+只对当前会话有效，其他会话仍然是默认值
+
+
+
+## 用户变量
+
+#### 也分两类：会话用户变量、局部变量
+
+![fd5fe290-004b-409e-b95d-5a22d225a692](mysql_screenshoot/fd5fe290-004b-409e-b95d-5a22d225a692.png)
+
+会话用户变量@，系统变量@@,只不过系统会话是@@session.变量，系统全局是@@global.变量
+
+局部变量只在begin end之间有效，无需任何前缀
+
+会话变量只要连接没断就一直存在
+
+
+
+![e48523d8-9b6b-4e81-9dd7-b2479df126de](mysql_screenshoot/e48523d8-9b6b-4e81-9dd7-b2479df126de.png)
+
+
+
+#### 赋值都要用SET，将select语句的值赋值给变量就要用INTO
+
+![8c649c9d-9347-41a1-b140-47bf21e5357c](mysql_screenshoot/8c649c9d-9347-41a1-b140-47bf21e5357c.png)
+
+
+
+# 错误处理机制
+
+
+
+![9c34cc9a-3487-46c3-9997-2786e8ce47f1](mysql_screenshoot/9c34cc9a-3487-46c3-9997-2786e8ce47f1.png)
+
+![4da6aee1-d5c6-4f68-bcea-4b28695444a3](mysql_screenshoot/4da6aee1-d5c6-4f68-bcea-4b28695444a3.png)
+
+
+
+# 分支结构
+
+![f4eb9e19-db80-4721-b894-3da2211a8aaf](mysql_screenshoot/f4eb9e19-db80-4721-b894-3da2211a8aaf.png)
+
+```sql
+DELIMITER //
+
+CREATE PROCEDURE find_age(IN age int)
+BEGIN 
+IF age>40 THEN SELECT '中老年';
+ ELSEIF age>30 THEN SELECT '中年'; 
+ELSEIF age>20 THEN SELECT '青年'; 
+ELSE SELECT '婴儿'; 
+END IF;
+END //
+
+DELIMITER ;
+
+CALL find_age(50);
+```
+
+## CASE
+
+![74038123-3c8a-4bdd-9f9a-a45ae61718e2](mysql_screenshoot/74038123-3c8a-4bdd-9f9a-a45ae61718e2.png)
 
 
 
 
 
+# 循环
+
+![ed394554-a251-4589-a663-ebb50ad70c36](mysql_screenshoot/ed394554-a251-4589-a663-ebb50ad70c36.png)
 
 
 
+例
+
+![cb6db637-54fc-45c7-afcb-f7563bd1b2a0](mysql_screenshoot/cb6db637-54fc-45c7-afcb-f7563bd1b2a0.png)
 
 
 
+repeat
+
+ until 
+
+end repeat
+
+![866ea79b-e0d5-42e3-9dbd-48276664008e](mysql_screenshoot/866ea79b-e0d5-42e3-9dbd-48276664008e.png)
+
+until 不加分号
 
 
+
+# LEAVE 相当于java中break
+
+要使用leave要给循环语句前加个标签，后面leave才知道你要退出到那个语句外面
+
+
+
+# ITERATE相当于java中continue
+
+
+
+# 字符集详解
+
+## server 的字符集决定database的字符集，所以再配置文件修改server字符集直接决定database的字符集，创建表时若没有指定字符集则由数据库的字符集决定   字段若没有指定字符集又是由表决定的。所以在都不指定字符集的情况下所有东西都是由server的字符集决定的
+
+
+
+![21245eca-0b79-4683-91bc-120f78ad14af](mysql_screenshoot/21245eca-0b79-4683-91bc-120f78ad14af.png)
+
+
+
+# linux中大小写规范
+
+linux中是大小写敏感的，而不是像windows不区分大小写，所以要注意
+
+![49527339-f249-48d7-9abd-9c63b89adb4a](mysql_screenshoot/49527339-f249-48d7-9abd-9c63b89adb4a.png)
+
+![1c5c33e4-ca38-41b6-b092-7356a083cbe2](mysql_screenshoot/1c5c33e4-ca38-41b6-b092-7356a083cbe2.png)
+
+关键字如select、from、where等不区分大小写。字段名也不区分
+
+## 修改默认大小写设置（不建议）
+
+![08cbd120-1118-4403-bff7-0d24c5654da8](mysql_screenshoot/08cbd120-1118-4403-bff7-0d24c5654da8.png)
+
+## 建议
+
+![e46fba99-e67f-48e6-ab4b-a89838cccc89](mysql_screenshoot/e46fba99-e67f-48e6-ab4b-a89838cccc89.png)
+
+## sql_mode
+
+![30c237c1-5497-4a48-a48d-89df82a6b9e1](mysql_screenshoot/30c237c1-5497-4a48-a48d-89df82a6b9e1.png)
+
+
+
+![9b00d7f7-fd54-4136-ae7b-b557afdbc3bc](mysql_screenshoot/9b00d7f7-fd54-4136-ae7b-b557afdbc3bc.png)
+
+![2f5db2f3-7257-49a4-ad05-adf57f91397a](mysql_screenshoot/2f5db2f3-7257-49a4-ad05-adf57f91397a.png)
+
+![e40a9520-8017-4fe4-a3af-58b10f5ddf82](mysql_screenshoot/e40a9520-8017-4fe4-a3af-58b10f5ddf82.png)
+
+![5d3d5547-063e-4e44-aeb8-46c5d5c0767d](mysql_screenshoot/5d3d5547-063e-4e44-aeb8-46c5d5c0767d.png)
+
+
+
+# linux中mysql目录
+
+![07963388-aa79-48ad-aed8-7aa52bc67fc2](mysql_screenshoot/07963388-aa79-48ad-aed8-7aa52bc67fc2.png) ：存放数据库文件的目录，称为数据目录
+
+
+
+![e4f5d2a8-5aea-47aa-9a07-88bc767a11b9](mysql_screenshoot/e4f5d2a8-5aea-47aa-9a07-88bc767a11b9.png)
+
+## 查看默认数据库
+
+![9fd813ca-a342-4430-9fbd-e3f927b10f80](mysql_screenshoot/9fd813ca-a342-4430-9fbd-e3f927b10f80.png)
+
+![a7a01c28-04f0-411b-95d8-d795d7c369b5](mysql_screenshoot/a7a01c28-04f0-411b-95d8-d795d7c369b5.png)
+
+
+
+ibdata1:系统表空间,可以存放数据库表中的数据在这里默认 12M
+
+新版本默认存放在每个表的ibd文件中，不用集中存放,叫    做独立表空间
+
+### 设置存放在系统表空间还是独立表空间
+
+![4853754d-d544-4fe2-98d6-993820eda1fe](mysql_screenshoot/4853754d-d544-4fe2-98d6-993820eda1fe.png)
+
+8.0中frm文件没有了
+
+![16047ef2-9681-4d84-9955-8e97da1437a7](mysql_screenshoot/16047ef2-9681-4d84-9955-8e97da1437a7.png)
+
+### 小结
+
+![725edb86-65f4-4152-b0ad-c0cd0010e8ba](mysql_screenshoot/725edb86-65f4-4152-b0ad-c0cd0010e8ba.png)
+
+
+
+# 用户与权限管理
+
+## 用户管理
+
+![3f80952e-c9ed-471b-a5f8-ab1815aa3dc5](mysql_screenshoot/3f80952e-c9ed-471b-a5f8-ab1815aa3dc5.png)
+
+
+
+### 创建用户
+
+create user 'zhang3' identified by '密码';   这样写默认host是%即所有主机都可以登录
+
+create user 'zhang3'@'localhost' identified by '密码'; 这样只能本地登录
+
+mysql用户表中host和user是联合主键，只要有其中一条有不同且都不为空就可以创建
+
+所以可以创建同名但是可登录主机名不同的用户
+
+
+
+### 修改用户
+
+![e6149de4-389b-4838-85c5-c9a1a6626377](mysql_screenshoot/e6149de4-389b-4838-85c5-c9a1a6626377.png)
+
+就改个名，其他都不在这改,修改的是user表的信息
+
+
+
+### 删除用户
+
+1.DROP USER，记得要带上主机名，即用户名@主机名,否则默认只删除主机是%的
+
+2.
+
+![a29ca4ac-5138-49b5-b545-c511a58427f6](mysql_screenshoot/a29ca4ac-5138-49b5-b545-c511a58427f6.png)
+
+![a1a81e2b-97d7-4d17-a8d1-99b8bc842337](mysql_screenshoot/a1a81e2b-97d7-4d17-a8d1-99b8bc842337.png)
+
+
+
+### 设置用户密码
+
+![61d733f4-aade-4c46-9e12-6829c6b2361d](mysql_screenshoot/61d733f4-aade-4c46-9e12-6829c6b2361d.png)
+
+![84466d5a-8afd-46cc-889e-67b92b787fe4](mysql_screenshoot/84466d5a-8afd-46cc-889e-67b92b787fe4.png)
+
+1.alter user ... identified by'新密码'
+
+2.set password = '新密码' (只能修改当前用户的)
+
+![f9c19636-fd11-45fd-92d9-c39dbd0f9021](mysql_screenshoot/f9c19636-fd11-45fd-92d9-c39dbd0f9021.png)
+
+
+
+### 密码管理
+
+![0ae3a4c6-937d-4edb-9399-3fdffd4c67a9](mysql_screenshoot/0ae3a4c6-937d-4edb-9399-3fdffd4c67a9.png)
+
+![3552f46b-ea3b-4d9b-ba03-1ef7ffa62918](mysql_screenshoot/3552f46b-ea3b-4d9b-ba03-1ef7ffa62918.png)
+
+![9af8c202-6b6a-45f3-b4b1-6661e9c5f712](mysql_screenshoot/9af8c202-6b6a-45f3-b4b1-6661e9c5f712.png)
+
+![f69b62d4-632f-4ebc-b997-6922db8258c6](mysql_screenshoot/f69b62d4-632f-4ebc-b997-6922db8258c6.png)
+
+![70e96de9-9da3-4513-aa88-754cc0000fa2](mysql_screenshoot/70e96de9-9da3-4513-aa88-754cc0000fa2.png)
+
+![e7ffaad7-3785-48ae-bd5c-42ecda8807d1](mysql_screenshoot/e7ffaad7-3785-48ae-bd5c-42ecda8807d1.png)
+
+![5d43a7b7-1f40-4f9b-8907-4954e6be2f6b](mysql_screenshoot/5d43a7b7-1f40-4f9b-8907-4954e6be2f6b.png)
+
+
+
+# 权限管理
+
+ORACLE中登陆权限： grant create session to 用户
+
+![24aafcfc-9f5c-4345-8676-c0b101ba5c9a](mysql_screenshoot/24aafcfc-9f5c-4345-8676-c0b101ba5c9a.png)
+
+## 权限原则:给用户满足的最小权限
+
+![b0f7e59f-6005-42de-abb5-da92e4df4891](mysql_screenshoot/b0f7e59f-6005-42de-abb5-da92e4df4891.png)
+
+## 赋予权限语法：
+
+![cae96da6-258a-4b75-b90d-b17c2c4b0aac](mysql_screenshoot/cae96da6-258a-4b75-b90d-b17c2c4b0aac.png)
+
+GRANT 权限 ON 表、数据库等 TO 用户名@主机名  IDENTIFIED BY '密码'(可以顺便把密码都改了)
+
+没有用户会直接创建
+
+若多次赋予权限，权限并不会覆盖而是增加上去
+
+常用权限：select、delete、update
+
+ grant ALL privilege on \* .\*：赋予所有库、表的所有权限
+
+此时除了赋予权限的权限没有之外，其他和root没什么区别（没有with grant option权限）
+
+![9dae1af4-ee36-4aed-81b2-8c30b15b92c6](mysql_screenshoot/9dae1af4-ee36-4aed-81b2-8c30b15b92c6.png)
+
+![f646df16-5380-486b-9e26-6f370582185f](mysql_screenshoot/f646df16-5380-486b-9e26-6f370582185f.png)
+
+## 查看权限
+
+![aa098e25-b3ef-4ca7-a707-8efa8b7b5bf9](mysql_screenshoot/aa098e25-b3ef-4ca7-a707-8efa8b7b5bf9.png)
+
+## 回收权限：revoke 权限名 on 表、数据库名 from 用户名@主机名
+
+![d0512780-3092-4986-9415-0bed1434568d](mysql_screenshoot/d0512780-3092-4986-9415-0bed1434568d.png)
+
+![3da8efb5-9a7b-411f-a82c-4042c55b56c9](mysql_screenshoot/3da8efb5-9a7b-411f-a82c-4042c55b56c9.png)
+
+## 权限表
+
+![81d41dc3-be1b-4648-90d4-bf71871e1d33](mysql_screenshoot/81d41dc3-be1b-4648-90d4-bf71871e1d33.png)
+
+
+
+db表：某一个用户是否对某一个数据库具有权限
+
+table_priv表：用户对某个表是否有权限
+
+column_priv表：对表中某个字段是否有权限
+
+proc_priv表：对存储过程是否有权限
+
+![f08c7b99-58bd-464f-8916-e3b015a5d8f4](mysql_screenshoot/f08c7b99-58bd-464f-8916-e3b015a5d8f4.png)
+
+
+
+![86a73175-dd2e-4b87-bfcd-5d5056cd5a44](mysql_screenshoot/86a73175-dd2e-4b87-bfcd-5d5056cd5a44.png)
+
+从大往小依次看有没有权限,库->表->字段
+
+
+
+## 角色管理
 
 
 
